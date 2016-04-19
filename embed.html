@@ -1,0 +1,603 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+<title>PPmemory embed</title>
+
+<style type="text/css">
+
+/* structure */
+
+body {
+    margin: 0;
+    font-family: Tahoma, sans-serif;
+    color: #59504F;
+}
+
+#wrapper {
+    width: 100%;
+    margin: 0;
+    padding: 10px;
+    box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    position: relative;
+}
+
+.clear {
+    height: 0px;
+    clear: both;
+}
+
+.grid {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    float: left;
+}
+
+.grid > div {
+    position: relative;
+    width: 20%;
+    margin: 0;
+    padding: 0;
+    float: left;
+}
+
+.grid > div img.frontface,
+.grid > div img.backface {
+    position: absolute;
+    display: block;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    border: 0;
+    margin: 0;
+}
+
+.grid > div img.placeholder {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 0;
+    margin: 0;
+}
+
+/* animation */
+
+
+.grid > div.solved {
+    opacity: 0;
+    -webkit-transition: opacity 0.5s ease-out;
+    -moz-transition: opacity 0.5s ease-out;
+    -ms-transition: opacity 0.5s ease-out;
+    -o-transition: opacity 0.5s ease-out;
+    transition: opacity 0.5s ease-out;
+}
+
+.grid > div img.frontface {
+    opacity: 0;
+    -webkit-transition: -webkit-transform 0.5s ease-out;
+    -moz-transition: -moz-transform 0.5s ease-out;
+    -ms-transition: -ms-transform 0.5s ease-out;
+    -o-transition: -o-transform 0.5s ease-out;
+    transition: transform 0.5s ease-out;
+
+    -webkit-transform: perspective( 1000px ) rotateY( -180deg );
+    -moz-transform: perspective( 1000px ) rotateY( -180deg );
+    -ms-transform: perspective( 1000px ) rotateY( -180deg );
+    -o-transform: perspective( 1000px ) rotateY( -180deg );
+    transform: perspective( 1000px ) rotateY( -180deg );
+
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+    -ms-backface-visibility: hidden;
+    -o-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+.grid > div img.backface {
+    opacity: 1;
+    -webkit-transition: -webkit-transform 0.5s ease-out;
+    -moz-transition: -moz-transform 0.5s ease-out;
+    -ms-transition: -ms-transform 0.5s ease-out;
+    -o-transition: -o-transform 0.5s ease-out;
+    transition: transform 0.5s ease-out;
+
+    -webkit-transform: perspective( 1000px ) rotateY( 0 );
+    -moz-transform: perspective( 1000px ) rotateY( 0 );
+    -ms-transform: perspective( 1000px ) rotateY( 0 );
+    -o-transform: perspective( 1000px ) rotateY( 0 );
+    transform: perspective( 1000px ) rotateY( 0 );
+
+    -webkit-backface-visibility: hidden;
+    -moz-backface-visibility: hidden;
+    -ms-backface-visibility: hidden;
+    -o-backface-visibility: hidden;
+    backface-visibility: hidden;
+}
+
+/* animate in */
+
+.grid > div img.frontface.active {
+    opacity: 1;
+    -webkit-transform: perspective( 1000px ) rotateY( 0 );
+    -moz-transform: perspective( 1000px ) rotateY( 0 );
+    -ms-transform: perspective( 1000px ) rotateY( 0 );
+    -o-transform: perspective( 1000px ) rotateY( 0 );
+    transform: perspective( 1000px ) rotateY( 0 );
+}
+
+.grid > div img.backface.active {
+    opacity: 0;
+    -webkit-transform: perspective( 1000px ) rotateY( 180deg );
+    -moz-transform: perspective( 1000px ) rotateY( 180deg );
+    -ms-transform: perspective( 1000px ) rotateY( 180deg );
+    -o-transform: perspective( 1000px ) rotateY( 180deg );
+    transform: perspective( 1000px ) rotateY( 180deg );
+}
+
+/* animate out */
+
+.grid > div img.frontface.out {
+    opacity: 1;
+    -webkit-transform: perspective( 1000px ) rotateY( -180deg );
+    -moz-transform: perspective( 1000px ) rotateY( -180deg );
+    -ms-transform: perspective( 1000px ) rotateY( -180deg );
+    -o-transform: perspective( 1000px ) rotateY( -180deg );
+    transform: perspective( 1000px ) rotateY( -180deg );
+}
+
+.grid > div img.backface.out {
+    opacity: 1;
+    -webkit-transform: perspective( 1000px ) rotateY( 180deg );
+    -moz-transform: perspective( 1000px ) rotateY( 180deg );
+    -ms-transform: perspective( 1000px ) rotateY( 180deg );
+    -o-transform: perspective( 1000px ) rotateY( 180deg );
+    transform: perspective( 1000px ) rotateY( 180deg );
+}
+
+
+/* End screens */
+
+.finished-screen {
+    position: absolute;
+    width: 280px;
+    height: 320px;
+    left: 50%;
+    margin-left: -140px;
+    top: 50%;
+    margin-top: -160px;
+}
+
+.highscores-screen {
+    position: absolute;
+    width: 280px;
+    height: 280px;
+    left: 50%;
+    margin-left: -140px;
+    top: 50%;
+    margin-top: -140px;
+}
+
+.play-again-button,
+.submit-highscore-button {
+    display: block;
+    text-decoration: none;
+    color: #FFF;
+    font-size: 16px;
+    font-weight: bold;
+    margin: 10px auto;
+    width: 256px;
+    text-align: center;
+    line-height: 42px;
+    height: 42px;
+    border-radius: 10px;
+    background: #27d2d7;
+    background: -moz-linear-gradient(top, #27d2d7 0%, #1e898c 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#27d2d7), color-stop(100%,#1e898c));
+    background: -webkit-linear-gradient(top, #27d2d7 0%,#1e898c 100%);
+    background: -o-linear-gradient(top, #27d2d7 0%,#1e898c 100%);
+    background: -ms-linear-gradient(top, #27d2d7 0%,#1e898c 100%);
+    background: linear-gradient(to bottom, #27d2d7 0%,#1e898c 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#27d2d7', endColorstr='#1e898c',GradientType=0 );
+    border-right: 2px #215f61 solid;
+    border-bottom: 2px #215f61 solid;
+    text-shadow: 1px 1px #27d2d7, -1px -1px #215f61;
+}
+
+.play-again-button:hover,
+.submit-highscore-button:hover,
+.play-again-button:active,
+.submit-highscore-button:active {
+    background: -moz-linear-gradient(top, #1e898c 0%, #27d2d7 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#1e898c), color-stop(100%,#27d2d7));
+    background: -webkit-linear-gradient(top, #1e898c 0%,#27d2d7 100%);
+    background: -o-linear-gradient(top, #1e898c 0%,#27d2d7 100%);
+    background: -ms-linear-gradient(top, #1e898c 0%,#27d2d7 100%);
+    background: linear-gradient(to bottom, #1e898c 0%,#27d2d7 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1e898c', endColorstr='#27d2d7',GradientType=0 );
+}
+
+.finished-screen p {
+    text-align: center;
+}
+
+.finished-screen input[type="text"] {
+    display: block;
+    text-decoration: none;
+    color: #cdcdcd;
+    font-size: 16px;
+    margin: 10px auto;
+    width: 256px;
+    text-align: center;
+    line-height: 42px;
+    height: 42px;
+    border-radius: 10px;
+    border: 1px #dcdcdc solid;
+    outline: none;
+    font-family: Tahoma, sans-serif;
+}
+
+#score-table {
+    padding: 5px;
+    height: 162px;
+    background: #fff;
+    border-radius: 5px;
+    border: 1px #dcdcdc solid;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+#score-table table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#score-table table tr td {
+    padding: 0 10px;
+    line-height: 30px;
+    text-align: left;
+}
+
+#score-table table tr td:last-child {
+    text-align: right;
+}
+
+
+</style>
+
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+<script type="text/javascript">
+
+    //http://css-tricks.com/snippets/jquery/shuffle-dom-elements/
+    (function($){
+        $.fn.shuffle = function() {
+            var allElems = this.get(),
+                getRandom = function(max) { return Math.floor(Math.random() * max); },
+                shuffled = $.map(allElems, function() {
+                    var random = getRandom(allElems.length),
+                        randEl = $(allElems[random]).clone(true)[0];
+                    allElems.splice(random, 1);
+                    return randEl;
+                });
+            this.each(function(i){
+                $(this).replaceWith($(shuffled[i]));
+            });
+            return $(shuffled);
+        };
+    })(jQuery);
+
+    // game logic closure
+    $(document).ready(function () {
+
+        $('.grid > div').shuffle();
+
+        var animLocked = false;
+        var nChecks = 0;
+        var nSolved = 0;
+        var lastChecked = null;
+        var nClicks = 0;
+        var twoLast = [];
+
+        var tbaID = 0;
+        function instantTurnBackAll(){
+            clearTimeout(tbaID);
+            animLocked =  true;
+            $('.frontface').removeClass('active');
+            $('.frontface').addClass('out');
+            $('.backface').removeClass('active');
+            setTimeout(function(){
+                $('.frontface').removeClass('out');
+                animLocked =  false;
+                twoLast = [];
+            },500);
+        }
+
+        function turnBackAll(){
+            tbaID = setTimeout(instantTurnBackAll,1500);
+        }
+
+        function turnBackFaster() {
+            clearTimeout(tbaID);
+            animLocked =  true;
+            var front = $(twoLast).find('.frontface');
+            var back = $(twoLast).find('.backface');
+            front.removeClass('active');
+            front.addClass('out');
+            back.removeClass('active');
+            setTimeout(function(){
+                front.removeClass('out');
+                animLocked =  false;
+                twoLast = [];
+            },500);
+        }
+
+
+        $('.grid > div').click(function(){
+
+            var clickedEl = this;
+
+            if (!animLocked && !$(clickedEl).hasClass('solved')) {
+
+                var front = $(clickedEl).find('.frontface');
+                var back = $(clickedEl).find('.backface');
+                if (!front.hasClass('active')) {
+                    // turn to front
+                    animLocked =  true;
+                    front.addClass('active');
+                    back.addClass('out');
+                    if(twoLast.length == 2){
+                        turnBackFaster();
+                    }
+                    setTimeout(function(){
+                        back.addClass('active');
+                        back.removeClass('out');
+                        if(lastChecked == null){
+                            // turned first one
+                            twoLast = [];
+                            lastChecked = clickedEl;
+                            animLocked =  false;
+                        } else if($(clickedEl).attr('class') === $(lastChecked).attr('class')){
+                            // turned second and solved
+                            $(clickedEl).addClass('solved');
+                            $(lastChecked).addClass('solved');
+                            twoLast = [];
+                            lastChecked = null;
+                            animLocked =  false;
+                            nChecks++;
+                            nSolved++;
+                            if (nSolved >= 15) {
+                                // show end screen
+                                $('.finished-screen').show();
+                                $('#score').text(nChecks);
+                            }
+                        } else {
+                            // turned second and not solved
+                            twoLast = [lastChecked, clickedEl];
+                            lastChecked = null;
+                            animLocked =  false;
+                            nChecks++;
+                            turnBackAll();
+                        }
+                    },500);
+                }
+                /*else {
+                    // turn to back
+                    animLocked =  true;
+                    front.removeClass('active');
+                    front.addClass('out');
+                    back.removeClass('active');
+                    setTimeout(function(){
+                        front.removeClass('out');
+                        animLocked =  false;
+                    },500);
+                }*/
+            }
+
+        });
+
+        $('.play-again-button').click(function(){
+
+            $('.grid > div').shuffle();
+            animLocked = false;
+            nChecks = 0;
+            nSolved = 0;
+            lastChecked = null;
+            twoLast = [];
+            $('.grid > div').removeClass('solved');
+            instantTurnBackAll();
+            $('.finished-screen').hide();
+            $('.highscores-screen').hide();
+        });
+
+        $('.submit-highscore-button').click(function(){
+            if (nSolved >= 15 && nChecks >= 15 && $('#player-name').val() != "") {
+                $.post( "score.php", { name: $('#player-name').val(), score: nChecks }).done(function( data ) {
+                    //alert( "Data Loaded: " + data );
+                    $('#score-table').html(data);
+                    $('.finished-screen').hide();
+                    $('.highscores-screen').show();
+                });
+            }
+        });
+
+    });
+</script>
+
+</head>
+<body>
+
+<div id="wrapper">
+
+    <div class="grid">
+        <div class="tile-1">
+            <img class="placeholder" src="img/trans.png" />
+            <img class="frontface" src="img/pict01A.jpg" />
+            <img class="backface" src="img/backface.jpg" />
+        </div>
+        <div class="tile-1">
+            <img class="placeholder" src="img/trans.png" />
+            <img class="frontface" src="img/pict01B.jpg" />
+            <img class="backface" src="img/backface.jpg" />
+        </div>
+        <div class="tile-2">
+            <img class="placeholder" src="img/trans.png" />
+            <img class="frontface" src="img/pict02A.jpg" />
+            <img class="backface" src="img/backface.jpg" />
+        </div>
+        <div class="tile-2">
+            <img class="placeholder" src="img/trans.png" />
+            <img class="frontface" src="img/pict02B.jpg" />
+            <img class="backface" src="img/backface.jpg" />
+        </div>
+        <div class="tile-3">
+            <img class="placeholder" src="img/trans.png" />
+            <img class="frontface" src="img/pict03A.jpg" />
+            <img class="backface" src="img/backface.jpg" />
+        </div>
+        <div class="tile-3">
+            <img class="placeholder" src="img/trans.png" />
+            <img class="frontface" src="img/pict03B.jpg" />
+            <img class="backface" src="img/backface.jpg" />
+        </div>
+        <div class="tile-4">
+            <img class="placeholder" src="img/trans.png" />
+            <img class="frontface" src="img/pict04A.jpg" />
+            <img class="backface" src="img/backface.jpg" />
+        </div>
+        <div class="tile-4">
+            <img class="placeholder" src="img/trans.png" />
+            <img class="frontface" src="img/pict04B.jpg" />
+            <img class="backface" src="img/backface.jpg" />
+        </div>
+        <div class="tile-5">
+            <img class="placeholder" src="img/trans.png" />
+            <img class="frontface" src="img/pict05A.jpg" />
+            <img class="backface" src="img/backface.jpg" />
+        </div>
+        <div class="tile-5">
+            <img class="placeholder" src="img/trans.png" />
+            <img class="frontface" src="img/pict05B.jpg" />
+            <img class="backface" src="img/backface.jpg" />
+        </div>
+        <div class="tile-6">
+            <img class="placeholder" src="img/trans.png" />
+            <img class="frontface" src="img/pict06A.jpg" />
+            <img class="backface" src="img/backface.jpg" />
+        </div>
+        <div class="tile-6">
+            <img class="placeholder" src="img/trans.png" />
+            <img class="frontface" src="img/pict06B.jpg" />
+            <img class="backface" src="img/backface.jpg" />
+        </div>
+        <div class="tile-7">
+            <img class="placeholder" src="img/trans.png" />
+            <img class="frontface" src="img/pict07A.jpg" />
+            <img class="backface" src="img/backface.jpg" />
+        </div>
+        <div class="tile-7">
+            <img class="placeholder" src="img/trans.png" />
+            <img class="frontface" src="img/pict07B.jpg" />
+            <img class="backface" src="img/backface.jpg" />
+        </div>
+        <div class="tile-8">
+            <img class="placeholder" src="img/trans.png" />
+            <img class="frontface" src="img/pict08A.jpg" />
+            <img class="backface" src="img/backface.jpg" />
+        </div>
+        <div class="tile-8">
+            <img class="placeholder" src="img/trans.png" />
+            <img class="frontface" src="img/pict08B.jpg" />
+            <img class="backface" src="img/backface.jpg" />
+        </div>
+        <div class="tile-9">
+            <img class="placeholder" src="img/trans.png" />
+            <img class="frontface" src="img/pict09A.jpg" />
+            <img class="backface" src="img/backface.jpg" />
+        </div>
+        <div class="tile-9">
+            <img class="placeholder" src="img/trans.png" />
+            <img class="frontface" src="img/pict09B.jpg" />
+            <img class="backface" src="img/backface.jpg" />
+        </div>
+        <div class="tile-10">
+            <img class="placeholder" src="img/trans.png" />
+            <img class="frontface" src="img/pict10A.jpg" />
+            <img class="backface" src="img/backface.jpg" />
+        </div>
+        <div class="tile-10">
+            <img class="placeholder" src="img/trans.png" />
+            <img class="frontface" src="img/pict10B.jpg" />
+            <img class="backface" src="img/backface.jpg" />
+        </div>
+        <div class="tile-11">
+            <img class="placeholder" src="img/trans.png" />
+            <img class="frontface" src="img/pict11A.jpg" />
+            <img class="backface" src="img/backface.jpg" />
+        </div>
+        <div class="tile-11">
+            <img class="placeholder" src="img/trans.png" />
+            <img class="frontface" src="img/pict11B.jpg" />
+            <img class="backface" src="img/backface.jpg" />
+        </div>
+        <div class="tile-12">
+            <img class="placeholder" src="img/trans.png" />
+            <img class="frontface" src="img/pict12A.jpg" />
+            <img class="backface" src="img/backface.jpg" />
+        </div>
+        <div class="tile-12">
+            <img class="placeholder" src="img/trans.png" />
+            <img class="frontface" src="img/pict12B.jpg" />
+            <img class="backface" src="img/backface.jpg" />
+        </div>
+        <div class="tile-13">
+            <img class="placeholder" src="img/trans.png" />
+            <img class="frontface" src="img/pict13A.jpg" />
+            <img class="backface" src="img/backface.jpg" />
+        </div>
+        <div class="tile-13">
+            <img class="placeholder" src="img/trans.png" />
+            <img class="frontface" src="img/pict13B.jpg" />
+            <img class="backface" src="img/backface.jpg" />
+        </div>
+        <div class="tile-14">
+            <img class="placeholder" src="img/trans.png" />
+            <img class="frontface" src="img/pict14A.jpg" />
+            <img class="backface" src="img/backface.jpg" />
+        </div>
+        <div class="tile-14">
+            <img class="placeholder" src="img/trans.png" />
+            <img class="frontface" src="img/pict14B.jpg" />
+            <img class="backface" src="img/backface.jpg" />
+        </div>
+        <div class="tile-15">
+            <img class="placeholder" src="img/trans.png" />
+            <img class="frontface" src="img/pict15A.jpg" />
+            <img class="backface" src="img/backface.jpg" />
+        </div>
+        <div class="tile-15">
+            <img class="placeholder" src="img/trans.png" />
+            <img class="frontface" src="img/pict15B.jpg" />
+            <img class="backface" src="img/backface.jpg" />
+        </div>
+    </div>
+    <div class="clear"><!-- --></div>
+    <div class="finished-screen" style="display:none;">
+        <p>Proficiat!<br />Je hebt de klus geklaard<br />in <span id="score">7</span> pogingen.<br />Je mag je naam opgeven<br />voor de ranking:</p>
+        <input type="text" name="player-name" id="player-name" value="" />
+        <a href="javascript:void(0)" class="submit-highscore-button">Verstuur score</a>
+        <a href="javascript:void(0)" class="play-again-button">Speel opnieuw</a>
+    </div>
+    <div class="highscores-screen" style="display:none;">
+        <div id="score-table"></div>
+        <a href="javascript:void(0)" class="play-again-button">Speel opnieuw</a>
+    </div>
+
+</div>
+
+</body>
+</html>
